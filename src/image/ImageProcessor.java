@@ -65,9 +65,6 @@ public class ImageProcessor {
         int tilesVertically = height / tileSize;
         int tilesHorizontally = width / tileSize;
 
-        int totalTiles = tilesVertically * tilesHorizontally;
-
-        //Color[][][] tiles = new Color[totalTiles][][];
         for (int row = 0; row < tilesVertically; row++) {
             tiles.add(new ArrayList<>());
             for (int col = 0; col < tilesHorizontally; col++) {
