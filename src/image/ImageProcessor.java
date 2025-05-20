@@ -5,6 +5,9 @@ import java.util.ArrayList;
 
 public class ImageProcessor {
     private static final int RGB_MAX_VAL = 255;
+    private static final double RED_PORTION_OF_GRAY = 0.2126;
+    private static final double GREEN_PORTION_OF_GRAY = 0.7152;
+    private static final double BLUE_PORTION_OF_GRAY = 0.0722;
     private static ImageProcessor instance = null;
 
     private final Image sourceImage;
@@ -87,8 +90,10 @@ public class ImageProcessor {
         for (int i = 0; i < image.getHeight(); i++) {
             for (int j = 0; j < image.getWidth(); j++) {
                 Color pixel = image.getPixel(i, j);
-                double greyGradeOfPixel = pixel.getRed() * 0.2126 + pixel.getGreen() * 0.7152
-                        + pixel.getBlue() * 0.0722;
+                double greyGradeOfPixel =
+                        pixel.getRed() * RED_PORTION_OF_GRAY +
+                        pixel.getGreen() * GREEN_PORTION_OF_GRAY +
+                        pixel.getBlue() * BLUE_PORTION_OF_GRAY;
                 meanGrade +=  greyGradeOfPixel;
             }
         }
