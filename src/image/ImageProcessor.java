@@ -8,23 +8,22 @@ public class ImageProcessor {
     private static ImageProcessor instance = null;
 
     private final Image sourceImage;
-    private final String imagePath;
+    private final int resolution;
     private final int tileSize;
     Color[][] paddedImage;
-    ArrayList<Image> tiles = new ArrayList<>();
+    ArrayList<ArrayList<Image>> tiles = new ArrayList<>();
 
-    private ImageProcessor(Image image, String imagePath, int tilePower) {
-        this.sourceImage = image;
-        this.imagePath = imagePath;
-        this.tileSize = tilePower;
+    private ImageProcessor(Image sourceImage, int resolution) {
+        this.sourceImage = sourceImage;
+        this.resolution = resolution;
         pad();
+        this.tileSize = paddedImage[0].length / resolution;
     }
 
-    public static ImageProcessor getInstance(Image image, String imagePath, int tilePower) {
+    public static ImageProcessor getInstance(Image image, int resolution) {
         if (instance == null ||
-                !instance.imagePath.equals(imagePath) ||
-                instance.tileSize != tilePower) {
-            instance = new ImageProcessor(image, imagePath, tilePower);
+                instance.resolution != resolution) {
+            instance = new ImageProcessor(image, resolution);
         }
         return instance;
     }
@@ -56,18 +55,18 @@ public class ImageProcessor {
         }
     }
 
-    public void splitIntoTiles() {
-
-
+    private void splitIntoTiles() {
         int height = paddedImage.length;
         int width = paddedImage[0].length;
 
         int tilesVertically = height / tileSize;
         int tilesHorizontally = width / tileSize;
+
         int totalTiles = tilesVertically * tilesHorizontally;
 
         //Color[][][] tiles = new Color[totalTiles][][];
         for (int row = 0; row < tilesVertically; row++) {
+            tiles.add(new ArrayList<>());
             for (int col = 0; col < tilesHorizontally; col++) {
                 Color[][] tile = new Color[tileSize][tileSize];
                 int startRow = row * tileSize;
@@ -78,13 +77,12 @@ public class ImageProcessor {
                         tile[i][j] = paddedImage[startRow + i][startCol + j];
                     }
                 }
-
-                tiles.add(new Image(tile, tileSize, tileSize));
+                tiles.get(row).add(new Image(tile, tileSize, tileSize));
             }
         }
     }
 
-    public double getMeanGrayGrade(Image image) {
+    private double getMeanGrayGrade(Image image) {
         double meanGrade = 0;
         for (int i = 0; i < image.getHeight(); i++) {
             for (int j = 0; j < image.getWidth(); j++) {
@@ -95,5 +93,16 @@ public class ImageProcessor {
             }
         }
         return meanGrade/(image.getHeight() * image.getWidth() * RGB_MAX_VAL);
+    }
+
+    public double[][] getMeanGrayGrades() {
+        splitIntoTiles();
+        double[][] meanGrayGrades = new double[tiles.size()][tiles.get(0).size()];
+        for (int i = 0; i < tiles.size(); i++) {
+            for (int j = 0; j < tiles.size(); j++) {
+                meanGrayGrades[i][j] = getMeanGrayGrade(tiles.get(i).get(j));
+            }
+        }
+        return meanGrayGrades;
     }
 }
