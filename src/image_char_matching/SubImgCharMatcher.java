@@ -23,10 +23,11 @@ public class SubImgCharMatcher {
 		}
 	}
 
-	public char getCharByImageBrightness (double brightness) throws EmptyCharSetException {
+	public char getCharByImageBrightness (double brightness)
+			throws EmptyCharSetException, IllegalBrightnessException {
 
-		if (charTree.isEmpty()) {
-			throw new EmptyCharSetException("You cannot get a char with an empty charset");
+		if (charTree.size() <= 2) {
+			throw new EmptyCharSetException("Did not execute. Charset is too small.");
 		}
 
 		if (brightness > 1 || brightness < 0) {
@@ -80,6 +81,55 @@ public class SubImgCharMatcher {
 		// TODO: check that chars are sorted in the correct order.
 	}
 
+	public void removeChar(char c) {
+
+		// find the char
+		Double brightness = null;
+		for (Map.Entry<Double, TreeSet<Character>> entry : charTree.entrySet()) {
+			for (Character character : entry.getValue()) {
+				if (character == c) {
+					brightness = entry.getKey();
+					break;
+				}
+			}
+		}
+
+		if (brightness == null){
+			return;
+		}
+
+		// properly delete the char
+		charTree.get(brightness).remove(c);
+		if (charTree.get(brightness).isEmpty()) {
+			boolean wasLowest = brightness.equals(charTree.firstKey());
+			boolean wasHighest = brightness.equals(charTree.lastKey());
+
+			charTree.remove(brightness);
+			if (charTree.isEmpty()) { return; }
+			if (wasHighest) {
+				maxBrightness = getNonNormalizedBrightness(charTree.lastEntry().getValue().first());
+				normalizeTree();
+			} else if (wasLowest) {
+				minBrightness = getNonNormalizedBrightness(charTree.firstEntry().getValue().first());
+				normalizeTree();
+			}
+		}
+	}
+
+	public void printChars() {
+		TreeSet<Character> charSet = new TreeSet<>();
+
+		for (TreeSet<Character> set : charTree.values()) {
+			charSet.addAll(set);
+		}
+
+		for (Character c : charSet) {
+			System.out.print(c + " ");
+		}
+
+		System.out.println();
+	}
+
 	private void normalizeTree() {
 		TreeMap<Double, TreeSet<Character>> newTree = new TreeMap<>();
 		for (Map.Entry<Double, TreeSet<Character>> entry : charTree.entrySet()) {
@@ -117,47 +167,12 @@ public class SubImgCharMatcher {
 					blackPixels++;
 				}
 			}
-
 		}
 
 		return whitePixels / (whitePixels + blackPixels);
 
 	}
 
-	public void removeChar(char c) {
-
-		// find the char
-		Double brightness = null;
-		for (Map.Entry<Double, TreeSet<Character>> entry : charTree.entrySet()) {
-			for (Character character : entry.getValue()) {
-				if (character == c) {
-					brightness = entry.getKey();
-					break;
-				}
-			}
-		}
-
-		if (brightness == null){
-			return;
-		}
-
-		// properly delete the char
-		charTree.get(brightness).remove(c);
-		if (charTree.get(brightness).isEmpty()) {
-			boolean wasLowest = brightness.equals(charTree.firstKey());
-			boolean wasHighest = brightness.equals(charTree.lastKey());
-
-			charTree.remove(brightness);
-			if (charTree.isEmpty()) { return; }
-			if (wasHighest) {
-				maxBrightness = getNonNormalizedBrightness(charTree.lastEntry().getValue().first());
-				normalizeTree();
-			} else if (wasLowest) {
-				minBrightness = getNonNormalizedBrightness(charTree.firstEntry().getValue().first());
-				normalizeTree();
-			}
-		}
-	}
 	public void setRoundMethod(RoundMethod newMethod) {
 		this.roundMethod = newMethod;
 	}
