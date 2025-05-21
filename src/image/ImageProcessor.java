@@ -38,10 +38,10 @@ public class ImageProcessor {
         return Integer.highestOneBit(n) << 1;
     }
 
-    public static int[] limitsOfPossibleResolution(Image image) {
+    public static boolean isLegalResoultion(Image image, int resolution) {
         int newWidth = nextPowerOfTwo(image.getWidth());
         int newHeight = nextPowerOfTwo(image.getHeight());
-        return new int[] {Math.max(1, newWidth/newHeight), newWidth};
+        return resolution >= Math.max(1, newWidth/newHeight) && resolution <= newWidth;
     }
 
     private void pad() {
