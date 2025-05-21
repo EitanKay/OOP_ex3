@@ -38,7 +38,7 @@ public class ImageProcessor {
         return Integer.highestOneBit(n) << 1;
     }
 
-    public static boolean isLegalResoultion(Image image, int resolution) {
+    public static boolean isLegalResolution(Image image, int resolution) {
         int newWidth = nextPowerOfTwo(image.getWidth());
         int newHeight = nextPowerOfTwo(image.getHeight());
         return resolution >= Math.max(1, newWidth/newHeight) && resolution <= newWidth;
