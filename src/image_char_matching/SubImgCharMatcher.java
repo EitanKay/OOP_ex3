@@ -6,12 +6,16 @@ import exceptions.IllegalBrightnessException;
 import java.util.*;
 
 public class SubImgCharMatcher {
-	// A Tree of all Characters, sorted in a tree according to their normalized brightness
+
+	private static final int MINIMUM_LEGAL_CHAR_COUNT = 2;
+	private static final RoundMethod DEFAULT_ROUND_METHOD = RoundMethod.ROUND_ABS;
+
+	// A Tree of all Characters
 	private TreeMap<Double, TreeSet<Character>> charTree;
 
 	private double maxBrightness;
 	private double minBrightness;
-	private RoundMethod roundMethod = RoundMethod.ROUND_ABS;
+	private RoundMethod roundMethod = DEFAULT_ROUND_METHOD;
 
 
 	public SubImgCharMatcher(char[] chars) {
@@ -26,7 +30,7 @@ public class SubImgCharMatcher {
 	public char getCharByImageBrightness (double brightness)
 			throws EmptyCharSetException, IllegalBrightnessException {
 
-		if (charTree.size() <= 2) {
+		if (charTree.size() < MINIMUM_LEGAL_CHAR_COUNT) {
 			throw new EmptyCharSetException("Did not execute. Charset is too small.");
 		}
 
