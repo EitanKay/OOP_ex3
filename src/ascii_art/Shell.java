@@ -21,10 +21,10 @@ public class Shell {
 	private static final String SPACEBAR_STRING = " ";
 	private static final String INCORRECT_INPUT_FORMAT_MSG = "Did not change output method due to incorrect format.";
 	private static final String RUN_ASCII_ART_INPUT = "asciiArt";
-	private static final int DEFAULT_RESOLUTION = 1024; // TODO: change back to defauld
+	private static final int DEFAULT_RESOLUTION = 8; // TODO: change back to defauld
 	private static final String CONSOLE_ASCII_OUTPUT_STR = "console";
 	private static final String HTML_ASCII_OUTPUT_STR = "html";
-	private static final String DEFAULT_ASCII_OUTPUT = HTML_ASCII_OUTPUT_STR; // TODO: change back to defauld
+	private static final String DEFAULT_ASCII_OUTPUT = CONSOLE_ASCII_OUTPUT_STR; // TODO: change back to defauld
 	private static final String HTML_OUT_FILE_SRC = "out.html";
 	private static final String OUT_FONT_NAME = "Courier New";
 	private static final int CHAR_HANDLE_ARG = 1;
@@ -42,22 +42,41 @@ public class Shell {
 	private static final int CHAR_RANGE_FIRST_CHAR_LOC = 0;
 	private static final int CHAR_RANGE_LAST_CHAR_LOC = 2;
 	private static final String REMOVE_INPUT_STR = "remove";
+	private static final String ASCII_OUTPUT_INPUT_STR = "output";
+	private static final String INCORRECT_ASCII_OUTPUT_FORMAT_EXCEPTION
+									= "Did not change output method due to incorrect format.";
+	private static final int OUTPUT_TYPE_ARG_HOLDER = 1;
 
 
 	private final SubImgCharMatcher charMatcher;
 	private Image image;
 	private int resolution = DEFAULT_RESOLUTION;
-	private AsciiOutput asciiOutput;
+	private String asciiOutput = DEFAULT_ASCII_OUTPUT;
 
 	public Shell(){
 		charMatcher = new SubImgCharMatcher(DEFAULT_CHAR_DATABASE);
-		setAsciiOutput(DEFAULT_ASCII_OUTPUT);
 	}
 
-	private void setAsciiOutput(String asciiOutputString) {
+	private void setAsciiOutput(String[] args) throws IncorrectFormatException{
+		//TODO: return to only set implementaion
+		if (args.length <= 1
+					|| (!args[OUTPUT_TYPE_ARG_HOLDER].equals(HTML_ASCII_OUTPUT_STR)
+				    	 && !args[OUTPUT_TYPE_ARG_HOLDER].equals(CONSOLE_ASCII_OUTPUT_STR))) {
+			throw new IncorrectFormatException(INCORRECT_ASCII_OUTPUT_FORMAT_EXCEPTION);
+		}
+		this.asciiOutput = args[OUTPUT_TYPE_ARG_HOLDER];
+	}
+
+	private AsciiOutput getAsciiOutput(String asciiOutputString) {
 		switch (asciiOutputString) {
-			case CONSOLE_ASCII_OUTPUT_STR -> asciiOutput = new ConsoleAsciiOutput();
-			case HTML_ASCII_OUTPUT_STR -> asciiOutput = new HtmlAsciiOutput(HTML_OUT_FILE_SRC,OUT_FONT_NAME);
+			case CONSOLE_ASCII_OUTPUT_STR -> {
+				return new ConsoleAsciiOutput();
+			} case HTML_ASCII_OUTPUT_STR -> {
+				return new HtmlAsciiOutput(HTML_OUT_FILE_SRC,OUT_FONT_NAME);
+			}default -> {
+				return getAsciiOutput(DEFAULT_ASCII_OUTPUT);
+			}
+
 		}
 	}
 
@@ -87,16 +106,20 @@ public class Shell {
 			System.out.print(NEXT_INPUT_MSG);
 			input = KeyboardInput.readLine();
 			String[] input_args = input.split(SPACEBAR_STRING);
-
-			switch (input_args[0]){
-				case EXIT_INPUT -> {}
-				case CHARS_INPUT -> charMatcher.printChars();
-				case RUN_ASCII_ART_INPUT -> runAsciiArt();
-				case ADD_INPUT_STR -> addChar(input_args);
-				case REMOVE_INPUT_STR -> removeChar(input_args);
-				default -> System.out.println(INCORRECT_INPUT_FORMAT_MSG);
+			try {
+				switch (input_args[0]) {
+					case EXIT_INPUT -> {
+					}
+					case CHARS_INPUT -> charMatcher.printChars();
+					case RUN_ASCII_ART_INPUT -> runAsciiArt();
+					case ADD_INPUT_STR -> addChar(input_args);
+					case REMOVE_INPUT_STR -> removeChar(input_args);
+					case ASCII_OUTPUT_INPUT_STR -> setAsciiOutput(input_args);
+					default -> System.out.println(INCORRECT_INPUT_FORMAT_MSG);
+				}
+			} catch (IncorrectFormatException e){
+				System.out.println(e.getMessage());
 			}
-
 		} while(!input.equals(EXIT_INPUT));
 	}
 
@@ -105,7 +128,7 @@ public class Shell {
 		// TOOD: Check why can this not run more than once
 		AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution, charMatcher);
 		try {
-			asciiOutput.out(asciiArtAlgorithm.run());
+			getAsciiOutput(asciiOutput).out(asciiArtAlgorithm.run());
 		} catch (EmptyCharSetException e) {
 			System.out.println(e.getMessage());
 		}
