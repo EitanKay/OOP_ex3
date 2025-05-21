@@ -99,7 +99,7 @@ public class ImageProcessor {
         splitIntoTiles();
         double[][] meanGrayGrades = new double[tiles.size()][tiles.get(0).size()];
         for (int i = 0; i < tiles.size(); i++) {
-            for (int j = 0; j < tiles.size(); j++) {
+            for (int j = 0; j < tiles.get(i).size(); j++) {
                 meanGrayGrades[i][j] = getMeanGrayGrade(tiles.get(i).get(j));
             }
         }

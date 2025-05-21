@@ -21,10 +21,10 @@ public class Shell {
 	private static final String SPACEBAR_STRING = " ";
 	private static final String INCORRECT_INPUT_FORMAT_MSG = "Did not change output method due to incorrect format.";
 	private static final String RUN_ASCII_ART_INPUT = "asciiArt";
-	private static final int DEFAULT_RESOLUTION = 64;
+	private static final int DEFAULT_RESOLUTION = 512; // TODO: change back to defauld
 	private static final String CONSOLE_ASCII_OUTPUT_STR = "console";
 	private static final String HTML_ASCII_OUTPUT_STR = "html";
-	private static final String DEFAULT_ASCII_OUTPUT = CONSOLE_ASCII_OUTPUT_STR;
+	private static final String DEFAULT_ASCII_OUTPUT = HTML_ASCII_OUTPUT_STR; // TODO: change back to defauld
 	private static final String HTML_OUT_FILE_SRC = "out.html";
 	private static final String OUT_FONT_NAME = "Courier New";
 	private static final int CHAR_HANDLE_ARG = 1;
@@ -102,6 +102,7 @@ public class Shell {
 
 
 	private void runAsciiArt() {
+		// TOOD: Check why can this not run more than once
 		AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution, charMatcher);
 		try {
 			asciiOutput.out(asciiArtAlgorithm.run());
