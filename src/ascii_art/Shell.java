@@ -21,7 +21,7 @@ public class Shell {
 	private static final String SPACEBAR_STRING = " ";
 	private static final String INCORRECT_INPUT_FORMAT_MSG = "Did not change output method due to incorrect format.";
 	private static final String RUN_ASCII_ART_INPUT = "asciiArt";
-	private static final int DEFAULT_RESOLUTION = 512; // TODO: change back to defauld
+	private static final int DEFAULT_RESOLUTION = 1024; // TODO: change back to defauld
 	private static final String CONSOLE_ASCII_OUTPUT_STR = "console";
 	private static final String HTML_ASCII_OUTPUT_STR = "html";
 	private static final String DEFAULT_ASCII_OUTPUT = HTML_ASCII_OUTPUT_STR; // TODO: change back to defauld
