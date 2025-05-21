@@ -1,7 +1,6 @@
 package image_char_matching;
 
 import exceptions.EmptyCharSetException;
-import exceptions.IllegalBrightnessException;
 
 import java.util.*;
 
@@ -28,14 +27,10 @@ public class SubImgCharMatcher {
 	}
 
 	public char getCharByImageBrightness (double brightness)
-			throws EmptyCharSetException, IllegalBrightnessException {
+			throws EmptyCharSetException {
 
 		if (charTree.size() < MINIMUM_LEGAL_CHAR_COUNT) {
 			throw new EmptyCharSetException("Did not execute. Charset is too small.");
-		}
-
-		if (brightness > 1 || brightness < 0) {
-			throw new IllegalBrightnessException("Brightness must be a double between 0 and 1");
 		}
 
 		// TODO: check if this is redundant
