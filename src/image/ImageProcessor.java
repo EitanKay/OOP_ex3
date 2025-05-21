@@ -3,6 +3,7 @@ package image;
 import java.awt.*;
 import java.util.ArrayList;
 
+
 public class ImageProcessor {
     private static final int RGB_MAX_VAL = 255;
     private static final double RED_PORTION_OF_GRAY = 0.2126;
@@ -35,6 +36,12 @@ public class ImageProcessor {
         if (n <= 0) return 1;
         if ((n & (n - 1)) == 0) return n;
         return Integer.highestOneBit(n) << 1;
+    }
+
+    public static int[] limitsOfPossibleResolution(Image image) {
+        int newWidth = nextPowerOfTwo(image.getWidth());
+        int newHeight = nextPowerOfTwo(image.getHeight());
+        return new int[] {Math.max(1, newWidth/newHeight), newWidth};
     }
 
     private void pad() {
