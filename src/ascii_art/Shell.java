@@ -16,8 +16,6 @@ import java.util.function.Consumer;
 
 public class Shell {
 
-
-
 	private static final String NEXT_INPUT_MSG = ">>> ";
 	private static final String INVALID_IMG_PATH_MSG =
 			"Invalid Image Path, try running the program again with a valid path.";
@@ -76,32 +74,22 @@ public class Shell {
 	private final SubImgCharMatcher charMatcher;
 	private Image image;
 	private int resolution = DEFAULT_RESOLUTION;
-	private String asciiOutput = DEFAULT_ASCII_OUTPUT;
+	private AsciiOutput asciiOutput;
 
 	public Shell(){
 		charMatcher = new SubImgCharMatcher(DEFAULT_CHAR_DATABASE);
+		setAsciiOutput(new String[]{ASCII_OUTPUT_INPUT_STR,DEFAULT_ASCII_OUTPUT});
 	}
 
 	private void setAsciiOutput(String[] args) throws IllegalFormatException {
-		//TODO: return to only set implementaion
-		if (args.length <= 1
-					|| (!args[OUTPUT_TYPE_ARG_HOLDER].equals(HTML_ASCII_OUTPUT_STR)
-				    	 && !args[OUTPUT_TYPE_ARG_HOLDER].equals(CONSOLE_ASCII_OUTPUT_STR))) {
+		if (args.length <= 1) {
 			throw new IllegalFormatException(INCORRECT_ASCII_OUTPUT_FORMAT_EXCEPTION);
-		}
-		this.asciiOutput = args[OUTPUT_TYPE_ARG_HOLDER];
-	}
-
-	private AsciiOutput getAsciiOutput(String asciiOutputString) {
-		switch (asciiOutputString) {
-			case CONSOLE_ASCII_OUTPUT_STR -> {
-				return new ConsoleAsciiOutput();
-			} case HTML_ASCII_OUTPUT_STR -> {
-				return new HtmlAsciiOutput(HTML_OUT_FILE_SRC,OUT_FONT_NAME);
-			}default -> {
-				return getAsciiOutput(DEFAULT_ASCII_OUTPUT);
-			}
-
+		} else if (args[OUTPUT_TYPE_ARG_HOLDER].equals(HTML_ASCII_OUTPUT_STR)) {
+			asciiOutput = new HtmlAsciiOutput(HTML_OUT_FILE_SRC, OUT_FONT_NAME);
+		} else if (args[OUTPUT_TYPE_ARG_HOLDER].equals(CONSOLE_ASCII_OUTPUT_STR)) {
+			asciiOutput = new ConsoleAsciiOutput();
+		} else {
+			throw new IllegalFormatException(INCORRECT_ASCII_OUTPUT_FORMAT_EXCEPTION);
 		}
 	}
 
@@ -188,10 +176,9 @@ public class Shell {
 
 
 	private void runAsciiArt() throws EmptyCharSetException{
-		// TOOD: Check why can this not run more than once
+		// TODO: Check why can this not run more than once
 		AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(image, resolution, charMatcher);
-		getAsciiOutput(asciiOutput).out(asciiArtAlgorithm.run());
-
+		asciiOutput.out(asciiArtAlgorithm.run());
 	}
 
 	private void addChar (String[] args) throws IllegalFormatException {
@@ -233,7 +220,7 @@ public class Shell {
 
 	}
 
-	public boolean isLegalCharRange(String arg) throws IllegalFormatException {
+	private boolean isLegalCharRange(String arg) throws IllegalFormatException {
 		if (arg.length() != CHAR_RANGE_ARG_LENGTH) {
 			return false;
 		}
@@ -247,7 +234,7 @@ public class Shell {
 		return true;
 	}
 
-	public void checkIfCharIsInRange(char c) throws IllegalFormatException {
+	private void checkIfCharIsInRange(char c) throws IllegalFormatException {
 		if (c < FIRST_LEGAL_CHAR || c > LAST_LEGAL_CHAR){
 			throw new IllegalFormatException(ADD_REMOVE_ERROR_MESSAGE);
 		}

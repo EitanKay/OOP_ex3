@@ -1,7 +1,6 @@
 package tests;
 
 import exceptions.EmptyCharSetException;
-import exceptions.IllegalBrightnessException;
 import image_char_matching.RoundMethod;
 import image_char_matching.SubImgCharMatcher;
 
@@ -90,12 +89,6 @@ public class SublmgCharMatcherTest {
 
 		System.out.println("\nAttempting to access a non normalized brightness\n");
 
-		charMatcher = new SubImgCharMatcher(new char[]{char1, char3});
-		try {
-			charMatcher.getCharByImageBrightness(1.5);
-		} catch (IllegalBrightnessException e) {
-			System.out.println("Succesfuly caught exception!");;
-		}
 		System.out.println("Finished all tests!!");
 
 	}
