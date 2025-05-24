@@ -4,6 +4,14 @@ import exceptions.EmptyCharSetException;
 
 import java.util.*;
 
+
+/**
+ * This class is used to match characters to their brightness in a sub-image.
+ * It is responsible for storing characters and their corresponding brightness values,
+ * managing duplicates, and normalizing brightness values.
+ *
+ * @author Eitan Kayesar and Ariel Monzon
+ */
 public class SubImgCharMatcher {
 
 	private static final int MINIMUM_LEGAL_CHAR_COUNT = 2;
@@ -17,6 +25,10 @@ public class SubImgCharMatcher {
 	private RoundMethod roundMethod = DEFAULT_ROUND_METHOD;
 
 
+	/**
+	 * Constructor for SubImgCharMatcher.
+	 * @param chars An array of initial characters to be added to the matcher.
+	 */
 	public SubImgCharMatcher(char[] chars) {
 
 		this.charTree = new TreeMap<>();
@@ -26,6 +38,13 @@ public class SubImgCharMatcher {
 		}
 	}
 
+	/**
+	 * Returns a character from the set that is closest to the given brightness.
+	 * @param brightness A brightness value between 0 and 1, where 0 is black and 1 is white.
+	 *                   Assumes that the brightnessis normalized.
+	 * @return
+	 * @throws EmptyCharSetException
+	 */
 	public char getCharByImageBrightness (double brightness)
 			throws EmptyCharSetException {
 
@@ -33,15 +52,17 @@ public class SubImgCharMatcher {
 			throw new EmptyCharSetException("Did not execute. Charset is too small.");
 		}
 
-		// TODO: check if this is redundant
-		if (charTree.size() == 1){
-			return charTree.firstEntry().getValue().first();
-		}
-
 		Double closest = null;
 
 		Double lowerBrightness = charTree.floorKey(brightness);
 		Double higherBrightness = charTree.ceilingKey(brightness);
+
+		// Handle edge cases where brightness is for some reason not normalized
+		if (brightness > 1) {
+			brightness = 1;
+		} else if (brightness < 0) {
+			brightness = 0;
+		}
 
 		switch (roundMethod) {
 			case ROUND_UP -> closest = higherBrightness;
@@ -53,6 +74,10 @@ public class SubImgCharMatcher {
 		return charTree.get(closest).first();
 	}
 
+	/**
+	 * Adds a character to the the character set.
+	 * @param c The character to be added.
+	 */
 	public void addChar (char c) {
 
 		double nonNormalizedBrightness = getNonNormalizedBrightness(c);
@@ -77,9 +102,12 @@ public class SubImgCharMatcher {
 		}
 
 		charTree.get(normalizedBrightness).add(c);
-		// TODO: check that chars are sorted in the correct order.
 	}
 
+	/**
+	 * Removes a character from the character set.
+	 * @param c The character to be removed.
+	 */
 	public void removeChar(char c) {
 
 		// find the char
@@ -115,6 +143,9 @@ public class SubImgCharMatcher {
 		}
 	}
 
+	/**
+	 * Prints all characters in the character set.
+	 */
 	public void printChars() {
 		TreeSet<Character> charSet = new TreeSet<>();
 
@@ -129,6 +160,11 @@ public class SubImgCharMatcher {
 		System.out.println();
 	}
 
+	/**
+	 * Normalizes the brightness values of all characters in the character set,
+	 * adjusting them to a range between 0 and 1. must be called after adding or
+	 * removing characters that change the brightness range.
+	 */
 	private void normalizeTree() {
 		TreeMap<Double, TreeSet<Character>> newTree = new TreeMap<>();
 		for (Map.Entry<Double, TreeSet<Character>> entry : charTree.entrySet()) {
@@ -140,6 +176,11 @@ public class SubImgCharMatcher {
 		charTree = newTree;
 	}
 
+	/**
+	 * Normalizes the brightness value to a range between 0 and 1.
+	 * @param nonNormalizedBrightness The brightness value to be normalized.
+	 * @return The normalized brightness value.
+	 */
 	private double normalizeBrightness(double nonNormalizedBrightness) {
 
 		if (minBrightness == maxBrightness) {
@@ -151,10 +192,15 @@ public class SubImgCharMatcher {
 
 	}
 
+/**
+	 * Calculates the non-normalized brightness of a character.
+	 * The brightness is calculated as the ratio of white pixels to total pixels.
+	 * @param c The character for which to calculate the brightness.
+	 * @return The non-normalized brightness value.
+	 */
 	private double getNonNormalizedBrightness(char c) {
 
 		boolean[][] boolArray = CharConverter.convertToBoolArray(c);
-		// TODO: figure out black/white
 		double blackPixels = 0;
 		double whitePixels = 0;
 
@@ -172,6 +218,10 @@ public class SubImgCharMatcher {
 
 	}
 
+	/**
+	 * Sets the method used for rounding brightness values.
+	 * @param newMethod The new rounding method to be used.
+	 */
 	public void setRoundMethod(RoundMethod newMethod) {
 		this.roundMethod = newMethod;
 	}

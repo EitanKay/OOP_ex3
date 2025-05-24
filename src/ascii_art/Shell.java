@@ -23,12 +23,12 @@ import java.util.function.Consumer;
  */
 public class Shell {
 
+
+	// Shell text constants
 	private static final String NEXT_INPUT_MSG = ">>> ";
 	private static final String EXIT_INPUT = "exit";
 	private static final String SPACEBAR_STRING = " ";
 	private static final String RUN_ASCII_ART_INPUT = "asciiArt";
-	private static final String CONSOLE_ASCII_OUTPUT_STR = "console";
-	private static final String HTML_ASCII_OUTPUT_STR = "html";
 	// Error messages
 	private static final String INVALID_IMG_PATH_MSG =
 			"Invalid Image Path, try running the program again with a valid path.";
@@ -45,12 +45,10 @@ public class Shell {
 	private static final String ADD_REMOVE_ERROR_MESSAGE = "Did not %s due to incorrect format.";
 
 
-	// defaults
-	private static final char[] DEFAULT_CHAR_DATABASE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-	private static final int DEFAULT_RESOLUTION = 2;
-	private static final String DEFAULT_ASCII_OUTPUT = CONSOLE_ASCII_OUTPUT_STR;
 
 	// output settings
+	private static final String CONSOLE_ASCII_OUTPUT_STR = "console";
+	private static final String HTML_ASCII_OUTPUT_STR = "html";
 	private static final String HTML_OUT_FILE_SRC = "out.html";
 	private static final String OUT_FONT_NAME = "Courier New";
 	private static final String ASCII_OUTPUT_INPUT_STR = "output";
@@ -84,6 +82,10 @@ public class Shell {
 	private static final String RESOLUTION_SET_TO_MESSAGE = "Resolution set to %d.";
 	private static final int ROUND_ARG_HOLDER = 1;
 
+	// defaults
+	private static final char[] DEFAULT_CHAR_DATABASE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+	private static final int DEFAULT_RESOLUTION = 2;
+	private static final String DEFAULT_ASCII_OUTPUT = CONSOLE_ASCII_OUTPUT_STR;
 
 	// The charMatcher object, in charge of handling the char collection and preparing it for processing
 	private final SubImgCharMatcher charMatcher;
